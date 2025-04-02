@@ -25,6 +25,8 @@ typedef struct s_pipex
 	int		fd_out;
 	int		fd_pipe[2];// Dove fd[0] = lettura, fd[1] = scrittura
 	char	**envp;
+	int		child_1;
+	int		child_2;
 	t_cmd	cmd;
 }
 			t_pipex;

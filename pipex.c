@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:16:21 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/01 19:00:26 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/02 15:28:56 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,14 @@ void	open_files(t_pipex pipex, char **envp, char **av)
 		close(pipex.fd_in);
 		exit(1);
 	}
-// controllo da fare nel find path
+/* // Controllo se i comandi sono vuoti o contengono solo spazi
+	if (av[2] == '\0' || av[3] == '\0' || find_spaces(av[2]) == 1 || find_spaces(av[3]) == 1)
+	{
+		perror("Error: Command not found\n");
+		close(pipex.fd_in);
+		close(pipex.fd_out);
+		exit(1);
+	} */
 	pipex.cmd.cmd1 = ft_split(av[2], ' ');
 	pipex.cmd.cmd2 = ft_split(av[3], ' ');
 	if (pipex.cmd.cmd1 == NULL || pipex.cmd.cmd2 == NULL)
@@ -43,32 +50,105 @@ void	open_files(t_pipex pipex, char **envp, char **av)
 
 char	*get_command_path(t_pipex pipex, char *cmd)
 {
-	int		i;
-	char	*path_env;
-	char	**path_split;
-	char	*cmd_path;
-	char	*temp;
+	char *path_env;
+	char **paths;
+	char *full_path;
+	char *temp;
+	int i;
 
-	i = 0;
-	path_env = find_env_path(pipex);
-	if (!path_env || !(path_split = ft_split(path_env, ':')))
-		return (NULL);
-	while (path_split[i])
+	// Controlla che l'argomento del programma sia valido
+	if (cmd == NULL || *cmd == '\0' || find_spaces(cmd) == 1)
 	{
-		temp = ft_strjoin(path_split[i], "/");
-		cmd_path = ft_strjoin(temp, cmd);
+		perror("Error: Invalid command\n");
+		if (pipex.fd_in != -1)
+			close(pipex.fd_in);
+		if (pipex.fd_out != -1)
+			close(pipex.fd_out);
+		exit(1);
+	}
+
+	// Ottengo il valore di path in stringa
+	path_env = find_env_path(pipex);
+	if (path_env == NULL)
+	{
+		perror("Error: Failed to find path\n");
+		exit(1);
+	}
+	paths = ft_split(path_env, ':');
+	if (paths == NULL)
+	{
+		perror("Error: Failed to split path\n");
+		free(path_env);
+		exit(1);
+	}
+	i = 0;
+	while (paths[i])
+	{
+		temp = ft_strjoin(paths[i], "/");
+		full_path = ft_strjoin(temp, cmd);
 		free(temp);
-		if (access(cmd_path, F_OK | X_OK) == 0)
+		if (access(full_path, F_OK | X_OK) == 0)
 		{
-			ft_free_split(path_split);
-			return (cmd_path);
+			free_split(paths);
+			free(path_env);
+			return (full_path);
 		}
-		free(cmd_path);
+		free(full_path);
 		i++;
 	}
-	ft_free_split(path_split);
+	free_split(paths);
+	free(path_env);
 	return (NULL);
 }
+// Il primo processo legge dall’input e scrive nella pipe
+void	create_first_process(int *fd_pipe, t_pipex pipex, char **envp)
+{
+	char *cmd_path;
+
+	pipex.child_1 = fork();
+	if (pipex.child_1 == -1)
+	{
+		perror("Error: Failed to create process\n");
+		exit(1);
+	}
+	if (pipex.child_1 == 0)// Siamo nel primo child
+	{
+		// Redirige input file -> stdin
+		dup2(pipex.fd_pipe[0], STDIN_FILENO);
+		// Redirige stdout -> pipe
+		dup2(pipex.fd_pipe[1], STDOUT_FILENO);
+		close(pipex.fd_pipe[0]);
+		close(pipex.fd_pipe[1]);
+		cmd_path = get_command_path(pipex, pipex.cmd.cmd1[0]);
+		if (cmd_path == NULL)
+		{
+			perror("Error: Command not found\n");
+			exit(1);
+		}
+		execve(cmd_path, pipex.cmd.cmd1, envp);
+		if (execve(cmd_path, pipex.cmd.cmd1, envp) == -1)
+		{
+			perror("Error: Failed to execute command\n");
+			free(cmd_path);
+			exit(1);
+		}
+	}
+}
+
+// Il secondo processo legge dalla pipe e scrive nell’output
+void	create_second_process(int *fd_pipe, t_pipex pipex, char **envp)
+{
+	char *cmd_path;
+
+	pipex.child_2 = fork();
+	if (pipex.child_2 == -1)
+	{
+		perror("Error: Failed to create process\n");
+		exit(1);
+	}
+
+}
+
 
 int main(int ac, char **av, char **envp)
 {

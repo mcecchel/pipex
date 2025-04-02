@@ -6,12 +6,20 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:37:33 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/01 18:40:44 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/02 14:03:10 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
+int	find_spaces(char c)
+{
+	if (c == 32 || c >= 9 && c <= 13)
+		return (1);
+	return (0);
+}
+
+// Estrae il valore della variabile d’ambiente PATH, che contiene i percorsi dove cercare i comandi
 char	*find_env_path(t_pipex pipex)
 {
 	int i;
@@ -24,4 +32,19 @@ char	*find_env_path(t_pipex pipex)
 		i++;
 	}
 	return (NULL);
+}
+
+void	free_split(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);  // Libera ogni stringa
+		i++;
+	}
+	free(arr);  // Libera l'array stesso
 }
