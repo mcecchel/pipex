@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:37:33 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/02 14:03:10 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:36:55 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	find_spaces(char c)
 {
-	if (c == 32 || c >= 9 && c <= 13)
+	if (c == 32 || (c >= 9 && c <= 13))
 		return (1);
 	return (0);
 }
@@ -47,4 +47,15 @@ void	free_split(char **arr)
 		i++;
 	}
 	free(arr);  // Libera l'array stesso
+}
+
+void	clean_all(t_pipex pipex)
+{
+	free_split(pipex.cmd.cmd1);
+	free_split(pipex.cmd.cmd2);
+	free(pipex.cmd.cmd1);
+	free(pipex.cmd.cmd2);
+	free(pipex.cmd.flag1);
+	free(pipex.cmd.flag2);
+	free(pipex.envp);
 }
