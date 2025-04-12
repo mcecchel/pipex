@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:16:21 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/08 17:39:41 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/12 20:03:44 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*get_command_path(t_pipex pipex, char *cmd)
 	int i;
 
 	// Controlla che l'argomento del programma sia valido
-	if (cmd == NULL || *cmd == '\0' || find_spaces(*cmd) == 1)
+	if (cmd == NULL || *cmd == '\0' || find_spaces(cmd) == 1)
 	{
 		perror("Error: Invalid command\n");
 		if (pipex.fd_in != -1)
