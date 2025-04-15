@@ -6,19 +6,37 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:16:21 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/15 14:40:12 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/15 18:53:26 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
+int	open_file(t_pipex pipex, char *file, int in_or_out)
+{
+	int	ret_fd;
+
+	if (in_or_out == 0) // Infile
+		ret_fd = open(file, O_RDONLY);
+	if (in_or_out == 1) // Outfile
+		ret_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (ret_fd < 0)
+	{
+		perror("In or Out -file open failed");
+		close(pipex.fd_pipe[0]);
+		close(pipex.fd_pipe[1]);
+		exit(1);
+	}
+	return (ret_fd);
+}
+
 char	*get_cmd_path(t_pipex pipex, char *cmd)
 {
-	char *path_env;
-	char **paths;
-	char *full_path;
-	char *temp;
-	int i;
+	char	*path_env;
+	char	**paths;
+	char	*full_path;
+	char	*temp;
+	int		i;
 
 	// Controlla che l'argomento del programma sia valido
 	if (cmd == NULL || *cmd == '\0' || find_spaces(*cmd) == 1)
@@ -30,6 +48,8 @@ char	*get_cmd_path(t_pipex pipex, char *cmd)
 			close(pipex.fd_out);
 		exit(1);
 	}
+	if (access(cmd, F_OK | X_OK) == 0 && ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
 	// Ottengo il valore di path in stringa
 	path_env = find_env_path(pipex);
 	if (path_env == NULL)
@@ -43,8 +63,6 @@ char	*get_cmd_path(t_pipex pipex, char *cmd)
 		perror("Error: Failed to split path\n");
 		exit(1);
 	}
-	if (access(cmd, F_OK | X_OK) == 0)
-    	return (ft_strdup(cmd));
 	i = 0;
 	while (paths[i])
 	{
@@ -75,22 +93,26 @@ void	execute_cmd(t_pipex pipex, char *av, char **envp)
 		perror("Command not found");
 		exit(1);
 	}
-	printf("DEBUG | comando: %s\n", command[0]);
 	path = get_cmd_path(pipex, command[0]);
-	printf("DEBUG | path trovato: %s\n", path);
 	if (!path)
 	{
-		free_split(command);
 		perror("Command path not found");
+		free_split(command);
+		exit(1);
 	}
-	printf("DEBUG | eseguo: %s con execve()\n", command[0]);
 	execve(path, command, envp);
+	perror("Execve failed");
+	free_split(command);
+	free(path);
+	close(pipex.fd_pipe[0]);
+	close(pipex.fd_pipe[1]);
+	exit(1);
 }
 
 void	child_process(t_pipex pipex, char **av, char **envp)
 {
 	pipex.envp = envp;
-	pipex.fd_in = open(av[1], O_RDONLY);
+	pipex.fd_in = open_file(pipex, av[1], 0);
 	if (pipex.fd_in < 0)
 	{
 		perror("Infile open failed");
@@ -104,13 +126,11 @@ void	child_process(t_pipex pipex, char **av, char **envp)
 	close(pipex.fd_pipe[0]);
 	close(pipex.fd_pipe[1]);
 	execute_cmd(pipex, av[2], envp);
-	perror("Execve failed");
-	exit(1);
 }
 void	parent_process(t_pipex pipex, char **av, char **envp)
 {
 	pipex.envp = envp;
-	pipex.fd_out = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	pipex.fd_out = open_file(pipex, av[4], 1);
 	if (pipex.fd_out < 0)
 	{
 		perror("Outfile open failed");

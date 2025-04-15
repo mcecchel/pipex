@@ -6,23 +6,11 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:37:33 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/15 14:22:42 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/15 18:31:14 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	print_matrix(char **matrix)
-{
-	int	i;
-
-	i = 0;
-	while (matrix != NULL && matrix[i] != NULL)
-	{
-		ft_printf("%s\n", matrix[i]);
-		i++;
-	}
-}
 
 int	find_spaces(char c)
 {
@@ -34,7 +22,7 @@ int	find_spaces(char c)
 // Estrae il valore della variabile d’ambiente PATH, che contiene i percorsi dove cercare i comandi
 char	*find_env_path(t_pipex pipex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (pipex.envp[i])
@@ -46,19 +34,19 @@ char	*find_env_path(t_pipex pipex)
 	return (NULL);
 }
 
-void	free_split(char **arr)
+void	free_split(char **mat)
 {
 	int	i;
 
-	if (!arr)
+	if (!mat)
 		return ;
 	i = 0;
-	while (arr[i])
+	while (mat[i])
 	{
-		free(arr[i]);  // Libera ogni stringa
+		free(mat[i]);// Libera ogni stringa
 		i++;
 	}
-	free(arr);  // Libera l'array (mat) stesso
+	free(mat);// Libera la matrice stessa
 }
 
 void	clean_all(t_pipex pipex)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 18:42:23 by mcecchel          #+#    #+#             */
+/*   Updated: 2025/04/15 18:42:45 by mcecchel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 # define PIPEX_H
 
@@ -15,8 +27,6 @@ typedef struct s_cmd
 {
 	char	**cmd1;
 	char	**cmd2;
-	char	*flag1;
-	char	*flag2;
 }			t_cmd;
 
 typedef struct s_pipex
@@ -28,8 +38,7 @@ typedef struct s_pipex
 	int		child_1;
 	int		child_2;
 	t_cmd	cmd;
-}
-			t_pipex;
+}			t_pipex;
 
 // Helper functions
 void	print_matrix(char **matrix);
@@ -39,6 +48,7 @@ void	free_split(char **arr);
 void	clean_all(t_pipex pipex);
 
 // Main program functions
+int		open_file(t_pipex pipex, char *file, int in_or_out);
 char	*get_cmd_path(t_pipex pipex, char *cmd);
 void	execute_cmd(t_pipex pipex, char *av, char **envp);
 void	child_process(t_pipex pipex, char **av, char **envp);
