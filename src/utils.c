@@ -6,11 +6,23 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:37:33 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/12 15:35:17 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/15 14:22:42 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	print_matrix(char **matrix)
+{
+	int	i;
+
+	i = 0;
+	while (matrix != NULL && matrix[i] != NULL)
+	{
+		ft_printf("%s\n", matrix[i]);
+		i++;
+	}
+}
 
 int	find_spaces(char c)
 {
@@ -46,7 +58,7 @@ void	free_split(char **arr)
 		free(arr[i]);  // Libera ogni stringa
 		i++;
 	}
-	free(arr);  // Libera l'array stesso
+	free(arr);  // Libera l'array (mat) stesso
 }
 
 void	clean_all(t_pipex pipex)
@@ -55,7 +67,5 @@ void	clean_all(t_pipex pipex)
 	free_split(pipex.cmd.cmd2);
 	free(pipex.cmd.cmd1);
 	free(pipex.cmd.cmd2);
-	free(pipex.cmd.flag1);
-	free(pipex.cmd.flag2);
 	free(pipex.envp);
 }

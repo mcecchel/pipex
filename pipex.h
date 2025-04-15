@@ -32,17 +32,17 @@ typedef struct s_pipex
 			t_pipex;
 
 // Helper functions
+void	print_matrix(char **matrix);
 int		find_spaces(char c);
 char	*find_env_path(t_pipex pipex);
 void	free_split(char **arr);
 void	clean_all(t_pipex pipex);
 
 // Main program functions
-void	create_pipe(int *fd_pipe);
-void	init_file(t_pipex pipex, char **envp, char **av);
-char	*get_command_path(t_pipex pipex, char *cmd);
-void	create_first_process(t_pipex pipex, char **envp);
-void	create_second_process(t_pipex pipex, char **envp);
+char	*get_cmd_path(t_pipex pipex, char *cmd);
+void	execute_cmd(t_pipex pipex, char *av, char **envp);
+void	child_process(t_pipex pipex, char **av, char **envp);
+void	parent_process(t_pipex pipex, char **av, char **envp);
 
 int main(int ac, char **av, char **envp);
 

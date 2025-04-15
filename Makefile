@@ -6,7 +6,7 @@
 #    By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/31 17:59:16 by mcecchel          #+#    #+#              #
-#    Updated: 2025/04/12 19:43:49 by mcecchel         ###   ########.fr        #
+#    Updated: 2025/04/15 14:40:27 by mcecchel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ LIBFT_DIR	= Libft
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 
 SRC		= 	src/utils.c \
-			src/pino.c \
+			src/pipex.c \
+			main.c
 
 
 all: $(LIBFT_LIB) $(NAME)
