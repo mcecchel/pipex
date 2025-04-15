@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:53:49 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/15 18:54:03 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/15 18:54:41 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	main(int ac, char **av, char **envp)
 	close(pipex.fd_pipe[0]);
 	close(pipex.fd_pipe[1]);
 	close(pipex.fd_in);
-	close(pipex.fd_out);
+	close(pipex.fd_out);//se non va, sposta i close sotto waitpd
 	waitpid(pipex.child_1, NULL, 0);
 	waitpid(pipex.child_2, NULL, 0);
 	clean_all(pipex);
