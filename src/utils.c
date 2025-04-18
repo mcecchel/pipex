@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:37:33 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/15 18:31:14 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:17:18 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,51 @@ char	*find_env_path(t_pipex pipex)
 	}
 	return (NULL);
 }
+/*
+char	**split_cmd(const char *input)
+{
+	char	**args = malloc(100 * sizeof(char *));
+	int		i = 0, j = 0, k = 0;
+	int		in_quote = 0;
+	char	quote_char = 0;
+	char	buffer[1024];
+
+	while (input[i])
+	{
+		if ((input[i] == '\'' || input[i] == '"') && !in_quote)
+		{
+			in_quote = 1;
+			quote_char = input[i++];
+			continue;
+		}
+		else if (in_quote && input[i] == quote_char)
+		{
+			in_quote = 0;
+			i++;
+			continue;
+		}
+		else if (input[i] == ' ' && !in_quote)
+		{
+			if (k > 0)
+			{
+				buffer[k] = '\0';
+				args[j++] = strdup(buffer);
+				k = 0;
+			}
+			i++;
+			continue;
+		}
+		else
+			buffer[k++] = input[i++];
+	}
+	if (k > 0)
+	{
+		buffer[k] = '\0';
+		args[j++] = strdup(buffer);
+	}
+	args[j] = NULL;
+	return (args);
+} */
 
 void	free_split(char **mat)
 {

@@ -6,7 +6,7 @@
 /*   By: mcecchel <mcecchel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 15:16:21 by mcecchel          #+#    #+#             */
-/*   Updated: 2025/04/15 18:53:26 by mcecchel         ###   ########.fr       */
+/*   Updated: 2025/04/18 17:20:22 by mcecchel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	*get_cmd_path(t_pipex pipex, char *cmd)
 			close(pipex.fd_in);
 		if (pipex.fd_out != -1)
 			close(pipex.fd_out);
-		exit(1);
+		return (NULL);
 	}
 	if (access(cmd, F_OK | X_OK) == 0 && ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
@@ -55,13 +55,13 @@ char	*get_cmd_path(t_pipex pipex, char *cmd)
 	if (path_env == NULL)
 	{
 		perror("Error: Failed to find path\n");
-		exit(1);
+		return (NULL);
 	}
 	paths = ft_split(path_env, ':');
 	if (paths == NULL)
 	{
 		perror("Error: Failed to split path\n");
-		exit(1);
+		return (NULL);
 	}
 	i = 0;
 	while (paths[i])
@@ -91,6 +91,8 @@ void	execute_cmd(t_pipex pipex, char *av, char **envp)
 	if (!command)
 	{
 		perror("Command not found");
+		close(0);
+		close(1);
 		exit(1);
 	}
 	path = get_cmd_path(pipex, command[0]);
@@ -98,6 +100,8 @@ void	execute_cmd(t_pipex pipex, char *av, char **envp)
 	{
 		perror("Command path not found");
 		free_split(command);
+		close(0);
+		close(1);
 		exit(1);
 	}
 	execve(path, command, envp);
@@ -106,6 +110,8 @@ void	execute_cmd(t_pipex pipex, char *av, char **envp)
 	free(path);
 	close(pipex.fd_pipe[0]);
 	close(pipex.fd_pipe[1]);
+	close(0);
+	close(1);
 	exit(1);
 }
 
